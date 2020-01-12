@@ -100,10 +100,9 @@ class StocksCacheService
 
   # Flushing
 
-  def flush_all_quotes
-    logger.info "redis: flushing all keys with prefix #{QUOTE_KEY_PREFIX}"
-    keys = redis.keys "#{QUOTE_KEY_PREFIX}*"
-    redis.call [:del, *keys] if keys.present?
+  def flush_all_quotes_if_needed
+    should_flush = ENV['FORCED'].present? || market_weekday?
+    flush_all_quotes if should_flush
   end
 
   private
@@ -129,6 +128,12 @@ class StocksCacheService
   end
 
   # REDIS Helpers
+
+  def flush_all_quotes
+    logger.info "redis: flushing all keys with prefix #{QUOTE_KEY_PREFIX}"
+    keys = redis.keys "#{QUOTE_KEY_PREFIX}*"
+    redis.call [:del, *keys] if keys.present?
+  end
 
   def delete_key_if_stale_or_refresh(key, refresh:)
     if refresh == 'refresh'
