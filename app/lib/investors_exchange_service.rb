@@ -10,24 +10,30 @@ class InvestorsExchangeService
   end
 
   def get_quote(symbol)
-    res = @conn.get("stock/#{symbol}/quote", { token: api_token })
-    res.success? ? res.body : nil
+    get("stock/#{symbol}/quote")
   end
 
   def get_quotes(symbols)
-    res = @conn.get("stock/market/quote", { token: api_token, symbols: symbols })
-    res.success? ? res.body : nil
+    get("stock/market/quote", params: { symbols: symbols })
   end
 
   def get_symbols_string
-    res = @conn.get("ref-data/symbols", { token: api_token })
-    res.success? ? res.body : nil 
+    get("ref-data/symbols")
   end
 
   private
 
+  def get(url, params: {})
+    params[:token] = api_token
+    parse_response(@conn.get(url, params))
+  end
+
   def api_token
     @api_token ||= ENV.fetch('IEX_PRODUCTION_TOKEN', ENV['IEX_SANDBOX_TOKEN'])
+  end
+
+  def parse_response(res)
+    res.success? ? res.body : nil
   end
 
 end

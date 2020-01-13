@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 
-  namespace :api do
+  namespace :api, defaults: { format: :json } do
     # Quotes
     get ':symbol/quote', to: 'quotes#quote'
     get 'quotes', to: 'quotes#quotes'
