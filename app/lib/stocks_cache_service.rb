@@ -95,7 +95,6 @@ class StocksCacheService
         end
       end
     end
-
   end
 
   # Flushing
