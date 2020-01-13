@@ -3,7 +3,7 @@ Rails.application.routes.draw do
 
   namespace :api, defaults: { format: :json } do
     # Quotes
-    get ':symbol/quote', to: 'quotes#quote'
+    get ':symbol/quotes', to: 'quotes#quote'
     get 'quotes', to: 'quotes#quotes'
 
     # Symbols
