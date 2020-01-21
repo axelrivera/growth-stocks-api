@@ -75,7 +75,7 @@ class ReceiptService
     receipt = latest_receipt()
     return { valid: false } unless receipt.present?
 
-    { status: true, latest_info: receipt_payload(receipt) }
+    { valid: true, latest_info: receipt_payload(receipt) }
   end
 
   def valid_receipt?
@@ -99,6 +99,8 @@ class ReceiptService
   # Receipt Helpers
 
   def receipt_payload(receipt)
+    time_offset = device_time_offset
+    logger.debug "receipt payload with device time offset: #{time_offset}"
     {
       product_id: receipt["product_id"],
       expires_date: receipt["expires_date"],
@@ -106,7 +108,7 @@ class ReceiptService
       purchase_date: receipt["purchase_date"],
       purchase_date_ms: receipt["purchase_date_ms"],
       original_transaction_id: receipt["original_transaction_id"],
-      device_time_offset: device_time_offset
+      device_time_offset: time_offset
     }
   end
 
