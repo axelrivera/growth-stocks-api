@@ -11,5 +11,6 @@ Rails.application.routes.draw do
 
     # App Store
     post 'appstore/verify_receipt', to: 'appstore#verify_receipt'
+    get 'appstore/ping', to: 'appstore#ping'
   end
 end

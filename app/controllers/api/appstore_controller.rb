@@ -4,25 +4,24 @@ class Api::AppstoreController < ApplicationController
   def verify_receipt
     receipt_status = ReceiptService.new(
       receipt_data: receipt_data,
-      device_timestamp: device_timestamp
+      original_transaction_id: params[:original_transaction_id]
     ).process
     render json: receipt_status, status: :ok
+  end
+
+  def ping
+    render json: { server_timestamp: Time.now.to_i }, status: :ok
   end
 
   protected
 
   def validate_receipt_params
     @receipt_data = params[:receipt_data]
-    @device_timestamp = params[:device_timestamp]
-    head :bad_request unless @receipt_data.present? && @device_timestamp.present?
+    head :bad_request unless @receipt_data.present?
   end
 
   def receipt_data
     @receipt_data
-  end
-
-  def device_timestamp
-    @device_timestamp
   end
 
 end
