@@ -1,9 +1,9 @@
 class Api::QuotesController < ApplicationController
+  before_action :set_refresh
+  before_action :validate_symbols_param, only: [:quotes]
 
   def quote
-    symbol = params[:symbol]
-    refresh = 'refresh' if params[:refresh].present?
-    quote = stocks_cache.get_quote(symbol, refresh: refresh)
+    quote = StocksCacheService.new.get_quote(params[:symbol], refresh: refresh)
 
     if quote.present?
       render json: quote
@@ -13,11 +13,7 @@ class Api::QuotesController < ApplicationController
   end
 
   def quotes
-    symbols = params[:symbols]
-    head :bad_request and return if symbols.blank?
-
-    refresh = 'refresh' if params[:refresh].present?
-    quotes = stocks_cache.get_quotes(symbols, refresh: refresh)
+    quotes = StocksCacheService.new.get_quotes(symbols, refresh: refresh)
 
     if quotes.present?
       render json: quotes
@@ -26,10 +22,23 @@ class Api::QuotesController < ApplicationController
     end
   end
 
-  private
+  protected
 
-  def stocks_cache
-    @stocks_cache ||= StocksCacheService.new
+  def set_refresh
+    @refresh = 'refresh' if params[:refresh].present?
+  end
+
+  def refresh
+    @refresh
+  end
+
+  def validate_symbols_param
+    @symbols = params[:symbols]
+    head :bad_request unless @symbols.present?
+  end
+
+  def symbols
+    @symbols
   end
 
 end

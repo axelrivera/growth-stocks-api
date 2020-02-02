@@ -8,5 +8,9 @@ Rails.application.routes.draw do
 
     # Symbols
     get 'symbols', to: 'symbols#symbols'
+
+    # App Store
+    post 'appstore/verify_receipt', to: 'appstore#verify_receipt'
+    get 'appstore/ping', to: 'appstore#ping'
   end
 end
