@@ -1,6 +1,8 @@
 class InvestorsExchangeService
 
   def initialize
+    @api_token ||= ENV.fetch('IEX_PRODUCTION_TOKEN', ENV['IEX_SANDBOX_TOKEN'])
+    
     base_url = ENV.fetch('IEX_PRODUCTION_URL', ENV['IEX_SANDBOX_URL'])
     @conn = Faraday.new(url: base_url) do |faraday|
       faraday.headers['Accept'] = 'application/json'
@@ -23,13 +25,11 @@ class InvestorsExchangeService
 
   private
 
+  attr_reader :api_token
+
   def get(url, params: {})
     params[:token] = api_token
     parse_response(@conn.get(url, params))
-  end
-
-  def api_token
-    @api_token ||= ENV.fetch('IEX_PRODUCTION_TOKEN', ENV['IEX_SANDBOX_TOKEN'])
   end
 
   def parse_response(res)

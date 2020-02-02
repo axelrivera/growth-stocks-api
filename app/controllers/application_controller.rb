@@ -3,7 +3,7 @@ class ApplicationController < ActionController::API
 
   def validate_auth_token
     return unless Rails.env.production?
-    head 403 if ENV['AUTH_TOKEN'].blank?
+    head :forbidden and return if ENV['AUTH_TOKEN'].blank?
 
     auth_header = request.env['HTTP_AUTHORIZATION']
     if auth_header && auth_header.split(' ').length == 2 
