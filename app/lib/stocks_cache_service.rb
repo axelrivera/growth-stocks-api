@@ -100,8 +100,7 @@ class StocksCacheService
   # Flushing
 
   def flush_all_quotes_if_needed
-    should_flush = ENV['FORCED'].present? || market_weekday?
-    flush_all_quotes if should_flush
+    flush_all_quotes
   end
 
   private
