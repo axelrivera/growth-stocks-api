@@ -47,14 +47,14 @@ class ReceiptService
   def process_receipt
     body = { 'receipt-data': receipt_data, password: password, 'exclude-old-transactions': true }
 
+    logger.info "POST #{verify_receipt_url} at #{Time.now}"
     res = @conn.post(verify_receipt_url, body.to_json)
-    if should_run_in_sandbox?(res)
-      logger.debug "fetching receipt from sandbox"
-      res = @conn.post(sandbox_url, body.to_json)
-    end
+    logger.info "Completed with HTTP Status #{res.status}"
 
-    unless res.success?
-      logger.info "verifyReceipt endpoint failed with status code #{res.status}"
+    if should_run_in_sandbox?(res)
+      logger.info "POST #{sandbox_url} at #{Time.now}"
+      res = @conn.post(sandbox_url, body.to_json)
+      logger.info "Completed with HTTP Status #{res.status}"
     end
 
     @request_succeeded = res.success?
@@ -85,8 +85,8 @@ class ReceiptService
   end
 
   def valid_status?
-    status = request_data["status"]
-    logger.debug "receipt status: #{status}"
+    status = request_data["status"] || -1
+    logger.info "Found App Store receipt with status: #{status}"
     status == 0
   end
 
@@ -107,8 +107,6 @@ class ReceiptService
       end
     end
     receipt = receipts.sort_by { |rec| rec["expires_date_ms"].to_i }.last
-
-    puts "receipt: #{receipt}"
 
     logger.debug "receipt error: no valid products found" if receipt.blank?
     receipt
