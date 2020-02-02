@@ -53,6 +53,10 @@ class ReceiptService
       res = @conn.post(sandbox_url, body.to_json)
     end
 
+    unless res.success?
+      logger.info "verifyReceipt endpoint failed with status code #{res.status}"
+    end
+
     @request_succeeded = res.success?
     @request_data = JSON.parse(res.body) if res.body.present?
   end

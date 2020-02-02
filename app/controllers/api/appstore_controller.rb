@@ -6,6 +6,7 @@ class Api::AppstoreController < ApplicationController
       receipt_data: receipt_data,
       original_transaction_id: params[:original_transaction_id]
     ).process
+
     render json: receipt_status, status: :ok
   end
 
