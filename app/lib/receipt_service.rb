@@ -69,10 +69,13 @@ class ReceiptService
   def parse_response
     return { valid: false } unless valid_receipt?
     
-    receipt = latest_receipt()
-    return { valid: false, refresh: true } unless receipt.present?
+    latest_field = latest_receipt_field()
+    return { valid: false, refresh: true } unless latest_field.present?
 
-    { valid: true, latest_info: receipt_payload(receipt) }
+    {
+      valid: true,
+      latest_info: receipt_info_payload(latest_field, latest_receipt()),
+    }
   end
 
   def valid_receipt?
@@ -94,7 +97,7 @@ class ReceiptService
     request_data.dig("receipt", "bundle_id") == app_bundle_id
   end
 
-  def latest_receipt
+  def latest_receipt_field
     receipts = request_data.dig("receipt", "in_app") || []
 
     receipts = receipts.select do |rec|
@@ -112,16 +115,22 @@ class ReceiptService
     receipt
   end
 
+  def latest_receipt
+    request_data["latest_receipt"]
+  end
+
   # Receipt Helpers
 
-  def receipt_payload(receipt)
+  def receipt_info_payload(field, latest_receipt)
     {
-      product_id: receipt["product_id"],
-      expires_date: receipt["expires_date"],
-      expires_date_ms: receipt["expires_date_ms"],
-      purchase_date: receipt["purchase_date"],
-      purchase_date_ms: receipt["purchase_date_ms"],
-      original_transaction_id: receipt["original_transaction_id"]
+      product_id: field["product_id"],
+      expires_date: field["expires_date"],
+      expires_date_ms: field["expires_date_ms"],
+      purchase_date: field["purchase_date"],
+      purchase_date_ms: field["purchase_date_ms"],
+      original_transaction_id: field["original_transaction_id"],
+      latest_receipt: latest_receipt,
+      latest_receipt_date: Time.now.to_i
     }
   end
 
