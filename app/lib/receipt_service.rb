@@ -12,7 +12,7 @@ class ReceiptService
     @receipt_data = receipt_data
     @original_transaction_id = original_transaction_id
 
-    # hard coded class variables
+    # other variables
     @app_bundle_id = ENV['STOCKS_APP_BUNDLE_ID']
     @production_url = ENV['APPSTORE_PRODUCTION_URL']
     @sandbox_url = ENV['APPSTORE_SANDBOX_URL']
